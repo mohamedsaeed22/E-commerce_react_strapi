@@ -14,23 +14,22 @@ const Products = () => {
     return data;
   };
 
-  const { isLoading, data, error } = useQuery(["products"], () =>
-    getProductList()
-  );
+  const { isLoading, data, error } = useQuery(["products"], getProductList);
+  console.log(data);
 
   if (isLoading)
     return (
       <Grid templateColumns="repeat(auto-fill, minmax(220px , 1fr))" gap={6}>
         {Array.from({ length: 3 }, (_, indx) => (
-          <ProductSkeleton key={indx}/>
+          <ProductSkeleton key={indx} />
         ))}
       </Grid>
     );
 
   return (
     <Grid templateColumns="repeat(auto-fill, minmax(220px , 1fr))" gap={6}>
-      {data?.data.map((product) => (
-        <ProductCard key={product._id} product={product} />
+      {data?.data?.map((product) => (
+        <ProductCard key={product.id} product={product} />
       )) || []}
     </Grid>
   );

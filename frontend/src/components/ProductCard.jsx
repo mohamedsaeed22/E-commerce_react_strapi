@@ -33,7 +33,7 @@ const ProductCard = ({ product }) => {
           <Text color="blue.600" fontSize="2xl">
             {price?.toLocaleString()}$
           </Text>
-          <Button as={Link} to={`product/${id}`} colorScheme="cyan">
+          <Button as={Link} to={`${product.documentId}`} colorScheme="cyan">
             View Details
           </Button>
         </Stack>
