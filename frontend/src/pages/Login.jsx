@@ -17,7 +17,9 @@ import {
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { actLogin } from "../store/auth/act/actLogin";
-export default function Login() {
+import { Navigate, useNavigate } from "react-router-dom";
+export default function Login({ isAuthenticated }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data, loading, error } = useSelector((state) => state.auth);
   const {
@@ -28,8 +30,16 @@ export default function Login() {
 
   const onSubmit = (data) => {
     console.log(data);
-    dispatch(actLogin(data));
+    dispatch(actLogin(data))
+      .unwrap()
+      .then(() => {
+        navigate("/");
+      })
+      .catch(() => {
+        console.log(error);
+      });
   };
+   if (isAuthenticated) return <Navigate to={"/"} replace />;
 
   return (
     <Flex

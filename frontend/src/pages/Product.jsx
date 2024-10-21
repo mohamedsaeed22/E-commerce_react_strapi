@@ -15,27 +15,31 @@ import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
 import { ArrowBackIcon } from "@chakra-ui/icons";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/cart/cartSlice";
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  useEffect(() => {
-    document.title = `${product?.title}`;
-  }, []);
+  const dispatch = useDispatch();
 
   const getProductById = async () => {
     const { data } = await axios.get(
       `${
         import.meta.env.VITE_SERVER_URL
-      }/api/products/${id}?populate[thumbnail]=*&populate[category]=*`
+      }/api/products/${id}?populate[thumbnail]=*&populate[category]=*&fields=title,price,description`
     );
     return data.data;
   };
+
   const {
     isLoading,
     data: product,
     error,
   } = useQuery(["products", id], getProductById);
-  console.log(product);
+  console.log(product)
+  useEffect(() => {
+    document.title = `${product?.title}`;
+  }, [product]);
 
   if (isLoading)
     return (
@@ -43,6 +47,10 @@ const Product = () => {
         <ProductDetailsSkeleton />
       </>
     );
+
+  const addToCartHandler = () => {
+    dispatch(addToCart(product));
+  };
 
   return (
     <Box m={10}>
@@ -77,7 +85,9 @@ const Product = () => {
             <Text color="blue.600" fontSize="2xl">
               {product?.price?.toLocaleString()}$
             </Text>
-            <Button colorScheme="cyan">Add to Cart</Button>
+            <Button colorScheme="cyan" onClick={addToCartHandler}>
+              Add to Cart
+            </Button>
           </Stack>
         </CardBody>
       </Card>

@@ -22,7 +22,7 @@ const ProductCard = ({ product }) => {
           objectFit="cover"
           borderRadius="full"
           boxSize="150px"
-          src={`${import.meta.env.VITE_SERVER_URL}/${thumbnail?.url}`}
+          src={`${thumbnail?.url}`}
           alt="Green double couch with wooden legs"
         />
         <Stack mt="6" spacing="3">

@@ -21,7 +21,13 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import cookieService from "../services/cookieService";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  onCloseCartDrawer,
+  onOpenCartDrawer,
+} from "../store/global/globalSlice";
 const Links = ["Dashboard", "Products", "Team"];
 
 const NavLink = ({ children }) => {
@@ -45,6 +51,15 @@ const NavLink = ({ children }) => {
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
+  const { cartProducts } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+  const token = cookieService.get("token");
+
+  const logout = () => {
+    cookieService.remove("token");
+    window.location.href = "/login";
+  };
+
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
@@ -73,47 +88,60 @@ export default function Navbar() {
               <Button onClick={toggleColorMode}>
                 {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
               </Button>
-              <Button
-                as={"a"}
-                fontSize={"sm"}
-                fontWeight={400}
-                variant={"link"}
-                href={"#"}
-              >
-                Sign In
+              <Button onClick={() => dispatch(onOpenCartDrawer())}>
+                Cart ({cartProducts.length})
               </Button>
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={"full"}
-                  variant={"link"}
-                  cursor={"pointer"}
-                  minW={0}
-                >
-                  <Avatar
-                    size={"sm"}
-                    src={"https://avatars.dicebear.com/api/male/username.svg"}
-                  />
-                </MenuButton>
-                <MenuList alignItems={"center"}>
-                  <br />
-                  <Center>
-                    <Avatar
-                      size={"2xl"}
-                      src={"https://avatars.dicebear.com/api/male/username.svg"}
-                    />
-                  </Center>
-                  <br />
-                  <Center>
-                    <p>Username</p>
-                  </Center>
-                  <br />
-                  <MenuDivider />
-                  <MenuItem>Your Servers</MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
-                </MenuList>
-              </Menu>
+
+              <HStack spacing={7}>
+                {token ? (
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      rounded={"full"}
+                      variant={"link"}
+                      cursor={"pointer"}
+                      minW={0}
+                    >
+                      <Avatar
+                        size={"sm"}
+                        src={
+                          "https://avatars.dicebear.com/api/male/username.svg"
+                        }
+                      />
+                    </MenuButton>
+                    <MenuList alignItems={"center"}>
+                      <br />
+                      <Center>
+                        <Avatar
+                          size={"2xl"}
+                          src={
+                            "https://avatars.dicebear.com/api/male/username.svg"
+                          }
+                        />
+                      </Center>
+                      <br />
+                      <Center>
+                        <p>Username</p>
+                      </Center>
+                      <br />
+                      <MenuDivider />
+                      <MenuItem>Your Servers</MenuItem>
+                      <MenuItem>Account Settings</MenuItem>
+                      <MenuItem onClick={logout}>Logout</MenuItem>
+                    </MenuList>
+                  </Menu>
+                ) : (
+                  <Button
+                    as={Link}
+                    fontSize={"sm"}
+                    fontWeight={400}
+                    variant={"link"}
+                    to={"/login"}
+                  >
+                    Sign In
+                  </Button>
+                )}
+              </HStack>
             </Stack>
           </Flex>
         </Flex>
